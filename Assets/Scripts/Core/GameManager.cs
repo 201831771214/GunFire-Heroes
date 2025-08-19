@@ -44,12 +44,9 @@ namespace GunFireHeroes.Core
             // 初始化各个系统
             InitializeSystems();
             
-            // 显示启动加载界面 -> 然后进入登录/主菜单
-            StartCoroutine(BootstrapFlow());
-
-            
-            // 加载玩家数据
+            // 加载玩家数据后，显示启动加载界面 -> 然后进入登录/主菜单
             LoadPlayerData();
+            StartCoroutine(BootstrapFlow());
         }
         
         private void InitializeWeChatMiniGame()
