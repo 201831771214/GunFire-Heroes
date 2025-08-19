@@ -175,21 +175,16 @@ namespace GunFireHeroes.Core
                 if (AuthManager.HasAnyAccount())
                 {
                     uiManager?.ShowPanel(GunFireHeroes.UI.UIPanel.Login);
-                    ChangeGameState(GameState.MainMenu);
                 }
                 else
                 {
                     uiManager?.ShowPanel(GunFireHeroes.UI.UIPanel.Register);
-                    ChangeGameState(GameState.MainMenu);
                 }
             }
             else
             {
-                uiManager?.ShowPanel(GunFireHeroes.UI.UIPanel.MainMenu);
                 ChangeGameState(GameState.MainMenu);
             }
-        }
-
         }
     }
     
