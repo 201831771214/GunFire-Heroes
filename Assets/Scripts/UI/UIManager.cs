@@ -74,20 +74,34 @@ namespace GunFireHeroes.UI
         /// </summary>
         public void ShowPanel(UIPanel panel)
         {
-            // 隐藏所有面板
             foreach (var kvp in panelDict)
             {
-                if (kvp.Value != null)
-                    kvp.Value.SetActive(false);
+                if (kvp.Value != null) kvp.Value.SetActive(false);
             }
-            
-            // 显示目标面板
             if (panelDict.ContainsKey(panel) && panelDict[panel] != null)
             {
                 panelDict[panel].SetActive(true);
                 currentPanel = panel;
                 OnPanelChanged(panel);
             }
+        }
+
+        /// <summary>
+        /// 显示加载界面（可选提示）
+        /// </summary>
+        public void ShowLoading(string tip = null)
+        {
+            ShowPanel(UIPanel.Loading);
+            if (loadingPanelComp != null && !string.IsNullOrEmpty(tip))
+                loadingPanelComp.SetTip(tip);
+        }
+
+        /// <summary>
+        /// 更新加载进度
+        /// </summary>
+        public void SetLoadingProgress(float value)
+        {
+            if (loadingPanelComp != null) loadingPanelComp.SetProgress(value);
         }
         
         /// <summary>

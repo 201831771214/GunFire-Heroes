@@ -1,4 +1,6 @@
 using UnityEngine;
+using GunFireHeroes.UI;
+
 using System.Collections.Generic;
 using GunFireHeroes.Core;
 
@@ -51,26 +53,32 @@ namespace GunFireHeroes.Gameplay
         /// </summary>
         public bool StartStage(int stageId)
         {
+            var ui = Object.FindObjectOfType<UIManager>();
+            ui?.ShowLoading("正在加载关卡...");
+
             if (!stageDict.ContainsKey(stageId))
             {
                 Debug.LogError($"关卡不存在: {stageId}");
                 return false;
             }
-            
+
             var stage = stageDict[stageId];
             var playerData = PlayerDataManager.PlayerData;
-            
+
             // 检查关卡是否解锁
             if (stageId > playerData.maxUnlockedStage)
             {
                 Debug.Log("关卡未解锁");
                 return false;
             }
-            
-            // 开始关卡
-            GameManager.Instance.ChangeGameState(GameState.InGame);
+
+            // 加载并进入关卡
+            GameManager.Instance.ChangeGameState(GameState.Loading);
+            ui?.SetLoadingProgress(0.3f);
             LoadStage(stage);
-            
+            ui?.SetLoadingProgress(1f);
+
+            GameManager.Instance.ChangeGameState(GameState.InGame);
             Debug.Log($"开始关卡: {stage.stageName}");
             return true;
         }
