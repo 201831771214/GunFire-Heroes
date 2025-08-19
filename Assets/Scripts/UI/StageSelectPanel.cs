@@ -75,7 +75,6 @@ namespace GunFireHeroes.UI
             if (gm)
             {
                 gm.StartStage(PlayerDataManager.PlayerData.currentStage);
-                FindObjectOfType<UIManager>()?.ShowPanel(UIPanel.Gameplay);
             }
         }
     }
