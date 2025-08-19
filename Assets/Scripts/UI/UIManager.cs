@@ -17,6 +17,10 @@ namespace GunFireHeroes.UI
         public GameObject weaponPanel;
         public GameObject shopPanel;
         public GameObject settingsPanel;
+        public GameObject loginPanel;
+        public GameObject registerPanel;
+        public GameObject loadingPanel;
+        public GameObject stageSelectPanel;
         
         [Header("HUD元素")]
         public Text goldText;
@@ -34,16 +38,18 @@ namespace GunFireHeroes.UI
         
         private Dictionary<UIPanel, GameObject> panelDict;
         private UIPanel currentPanel = UIPanel.MainMenu;
+        private LoadingPanel loadingPanelComp;
         
         private void Awake()
         {
             InitializePanelDict();
+            loadingPanelComp = loadingPanel ? loadingPanel.GetComponent<LoadingPanel>() : null;
             UpdateCurrencyDisplay();
         }
         
         private void Start()
         {
-            ShowPanel(UIPanel.MainMenu);
+            // 初始界面由GameManager控制
         }
         
         private void InitializePanelDict()
@@ -55,7 +61,11 @@ namespace GunFireHeroes.UI
                 { UIPanel.Character, characterPanel },
                 { UIPanel.Weapon, weaponPanel },
                 { UIPanel.Shop, shopPanel },
-                { UIPanel.Settings, settingsPanel }
+                { UIPanel.Settings, settingsPanel },
+                { UIPanel.Login, loginPanel },
+                { UIPanel.Register, registerPanel },
+                { UIPanel.Loading, loadingPanel },
+                { UIPanel.StageSelect, stageSelectPanel }
             };
         }
         
@@ -98,6 +108,9 @@ namespace GunFireHeroes.UI
                     break;
                 case UIPanel.Shop:
                     RefreshShopPanel();
+                    break;
+                case UIPanel.Loading:
+                    if (loadingPanelComp != null) loadingPanelComp.SetTip("正在载入，请稍候...");
                     break;
             }
         }
@@ -305,6 +318,10 @@ namespace GunFireHeroes.UI
         Character,  // 角色界面
         Weapon,     // 武器界面
         Shop,       // 商店界面
-        Settings    // 设置界面
+        Settings,   // 设置界面
+        Login,      // 登录界面
+        Register,   // 注册界面
+        Loading,    // 加载界面
+        StageSelect // 关卡选择
     }
 }

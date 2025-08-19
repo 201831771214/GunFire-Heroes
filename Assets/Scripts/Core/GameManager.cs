@@ -1,5 +1,9 @@
 using UnityEngine;
 using System.Collections;
+using GunFireHeroes.UI;
+using GunFireHeroes.Character;
+using GunFireHeroes.Economy;
+
 
 namespace GunFireHeroes.Core
 {
@@ -11,7 +15,7 @@ namespace GunFireHeroes.Core
         public static GameManager Instance { get; private set; }
         
         [Header("游戏状态")]
-        public GameState currentState = GameState.MainMenu;
+        public GameState currentState = GameState.Loading;
         
         [Header("系统管理器")]
         public CharacterManager characterManager;
@@ -39,6 +43,10 @@ namespace GunFireHeroes.Core
             
             // 初始化各个系统
             InitializeSystems();
+            
+            // 显示启动加载界面 -> 然后进入登录/主菜单
+            StartCoroutine(BootstrapFlow());
+
             
             // 加载玩家数据
             LoadPlayerData();
@@ -88,16 +96,25 @@ namespace GunFireHeroes.Core
             {
                 case GameState.MainMenu:
                     // 显示主菜单UI
+                    if (uiManager != null) uiManager.ShowPanel(GunFireHeroes.UI.UIPanel.MainMenu);
+                    Time.timeScale = 1f;
                     break;
                 case GameState.InGame:
                     // 进入游戏状态
+                    if (uiManager != null) uiManager.ShowPanel(GunFireHeroes.UI.UIPanel.Gameplay);
+                    Time.timeScale = 1f;
                     break;
                 case GameState.Paused:
                     // 暂停游戏
                     Time.timeScale = 0f;
                     break;
+                case GameState.Loading:
+                    if (uiManager != null) uiManager.ShowPanel(GunFireHeroes.UI.UIPanel.Loading);
+                    Time.timeScale = 1f;
+                    break;
                 case GameState.GameOver:
                     // 游戏结束
+                    Time.timeScale = 1f;
                     break;
             }
         }
@@ -132,6 +149,50 @@ namespace GunFireHeroes.Core
                 // 失去焦点时保存数据
                 PlayerDataManager.SavePlayerData();
             }
+
+        }
+
+        private IEnumerator BootstrapFlow()
+        {
+            // 进入加载界面
+            ChangeGameState(GameState.Loading);
+            var startTime = Time.time;
+
+            // 模拟资源加载进度
+            float progress = 0f;
+            while (progress < 1f)
+            {
+                progress += Time.deltaTime * 0.5f; // 2秒完成
+                var ui = uiManager;
+                if (ui != null)
+                {
+                    var lp = ui.loadingPanel ? ui.loadingPanel.GetComponent<GunFireHeroes.UI.LoadingPanel>() : null;
+                    if (lp != null) lp.SetProgress(progress);
+                }
+                yield return null;
+            }
+
+            // 判断是否有账号，未登录则进入登录界面，否则主菜单
+            if (!AuthManager.IsLoggedIn)
+            {
+                if (AuthManager.HasAnyAccount())
+                {
+                    uiManager?.ShowPanel(GunFireHeroes.UI.UIPanel.Login);
+                    ChangeGameState(GameState.MainMenu);
+                }
+                else
+                {
+                    uiManager?.ShowPanel(GunFireHeroes.UI.UIPanel.Register);
+                    ChangeGameState(GameState.MainMenu);
+                }
+            }
+            else
+            {
+                uiManager?.ShowPanel(GunFireHeroes.UI.UIPanel.MainMenu);
+                ChangeGameState(GameState.MainMenu);
+            }
+        }
+
         }
     }
     
