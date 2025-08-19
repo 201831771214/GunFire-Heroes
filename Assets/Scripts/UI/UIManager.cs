@@ -288,12 +288,8 @@ namespace GunFireHeroes.UI
         
         public void OnStartGameButtonClicked()
         {
-            var gameplayManager = FindObjectOfType<Gameplay.GameplayManager>();
-            if (gameplayManager != null)
-            {
-                var playerData = PlayerDataManager.PlayerData;
-                gameplayManager.StartStage(playerData.currentStage);
-            }
+            // 打开关卡选择界面
+            ShowPanel(UIPanel.StageSelect);
         }
         
         public void OnPVPButtonClicked()
